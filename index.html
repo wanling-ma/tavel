@@ -1,0 +1,3357 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <!-- iPhone iOS 全螢幕 App 設定 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Travel">
+  <meta name="theme-color" content="#F8F5F0">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23E06D53'/><text x='50' y='65' font-size='50' text-anchor='middle'>🌸</text></svg>">
+  <title>Travel 旅程隨身小秘書</title>
+  <style>
+    /* ========== 日式簡約溫潤色彩與基礎設定 ========== */
+    :root {
+      --bg-cream: #F8F5F0;       /* 溫潤燕麥米色背景 */
+      --card-bg: #FFFFFF;        /* 純淨柔白卡片 */
+      --accent-coral: #E06D53;   /* 溫暖珊瑚粉橘（主按鈕與標記） */
+      --accent-coral-soft: #FCECE8;
+      --accent-matcha: #6A8372;  /* 抹茶墨綠（輔色、清新標籤） */
+      --accent-matcha-soft: #EEF3F0;
+      --accent-honey: #E5A84B;   /* 蜂蜜杏黃（提亮與提醒） */
+      --text-dark: #38332E;      /* 深茶褐主文字，比死黑更溫暖 */
+      --text-muted: #877F76;     /* 亞麻灰褐色次要文字 */
+      --border-warm: #EAE3D9;    /* 柔和微暖邊框 */
+      --shadow-soft: 0 8px 24px rgba(105, 85, 65, 0.07);
+      --shadow-pressed: 0 2px 8px rgba(105, 85, 65, 0.05);
+      --radius-sm: 14px;
+      --radius-md: 20px;
+      --radius-lg: 28px;
+      --radius-full: 999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+    }
+
+    body {
+      background-color: #EFE9E0; /* 電腦版外層微深米色 */
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 模擬 iPhone 手機容器（電腦置中像手機，在 iPhone 上滿版） */
+    #app-container {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background-color: var(--bg-cream);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 0 32px rgba(0, 0, 0, 0.08);
+      padding-top: env(safe-area-inset-top, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    /* ========== 頂部導覽列 ========== */
+    .app-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: rgba(248, 245, 240, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--border-warm);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--accent-coral-soft);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: inset 0 0 0 1px rgba(224, 109, 83, 0.15);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-dark);
+    }
+
+    .brand-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ========== 主畫面內容區 ========== */
+    .view-content {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-bottom: 96px; /* 預留浮動按鈕與底部間距 */
+    }
+
+    /* 歡迎小標語與統計 */
+    .welcome-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #FAF6F0 100%);
+      padding: 18px 20px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-text h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: var(--text-dark);
+    }
+
+    .welcome-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .trip-badge-count {
+      background: var(--accent-coral-soft);
+      color: var(--accent-coral);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* 區塊標題 */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 5px;
+      height: 16px;
+      background: var(--accent-coral);
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* ========== 旅程多欄大圖示並列網格 ========== */
+    .trips-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* 手機畫面左右雙欄大圖示 */
+      gap: 14px;
+    }
+
+    /* 旅程卡片 */
+    .trip-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      cursor: pointer;
+    }
+
+    .trip-card:active {
+      transform: scale(0.96);
+      box-shadow: var(--shadow-pressed);
+    }
+
+    /* 卡片大圖示標誌 */
+    .trip-icon-wrapper {
+      width: 68px;
+      height: 68px;
+      border-radius: 22px;
+      background: #F8F4EC;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      margin-bottom: 12px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+      position: relative;
+    }
+
+    .trip-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 6px;
+      line-height: 1.3;
+      word-break: break-word;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .trip-date-pill {
+      background: var(--accent-matcha-soft);
+      color: var(--accent-matcha);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+
+    .trip-days-badge {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* 卡片底部操作按鈕 */
+    .card-actions {
+      display: flex;
+      gap: 6px;
+      width: 100%;
+      margin-top: auto;
+      border-top: 1px dashed var(--border-warm);
+      padding-top: 10px;
+    }
+
+    .btn-card-action {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: var(--radius-sm);
+      border: none;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      transition: background 0.15s;
+    }
+
+    .btn-edit {
+      background: #F4EFE6;
+      color: var(--text-dark);
+    }
+    .btn-edit:active {
+      background: #E8E0D2;
+    }
+
+    .btn-delete {
+      background: #FFF1EE;
+      color: #D3452B;
+    }
+    .btn-delete:active {
+      background: #FDDCD7;
+    }
+
+    /* ========== 空白狀態（無旅程時） ========== */
+    .empty-state {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 40px 24px;
+      text-align: center;
+      border: 1px dashed var(--border-warm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .empty-icon {
+      font-size: 54px;
+      margin-bottom: 4px;
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .empty-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .empty-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      max-width: 260px;
+    }
+
+    .btn-empty-add {
+      margin-top: 8px;
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      border: none;
+      padding: 12px 24px;
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(224, 109, 83, 0.35);
+      cursor: pointer;
+    }
+
+    /* ========== 懸浮大「+」新增按鈕 ========== */
+    .fab-add-trip {
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+      right: calc(50% - 200px); /* 手機置中時固定在右下側 */
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-full);
+      background: linear-gradient(135deg, #E67A62 0%, #DC5B3E 100%);
+      color: #FFFFFF;
+      border: none;
+      box-shadow: 0 8px 24px rgba(220, 91, 62, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 300;
+      cursor: pointer;
+      z-index: 30;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @media (max-width: 440px) {
+      .fab-add-trip {
+        right: 20px;
+      }
+    }
+
+    .fab-add-trip:active {
+      transform: scale(0.9) rotate(90deg);
+      box-shadow: 0 4px 12px rgba(220, 91, 62, 0.3);
+    }
+
+    /* ========== 旅程詳情畫面（後續階段骨架） ========== */
+    .detail-view {
+      display: none; /* 預設隱藏，點擊旅程後切換顯示 */
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .detail-header {
+      padding: 14px 18px;
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border-warm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-back-home {
+      background: #F4EFE6;
+      border: none;
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .detail-trip-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail-trip-badge .badge-icon {
+      font-size: 20px;
+    }
+
+    .detail-trip-badge .badge-name {
+      font-size: 15px;
+      font-weight: 700;
+      max-width: 180px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ========== 階段三：準備物品清單樣式 ========== */
+    .checklist-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 4px;
+    }
+
+    /* 打包進度卡片 */
+    .progress-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .progress-title-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .progress-count-pill {
+      background: var(--accent-coral-soft);
+      color: var(--accent-coral);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #F0EAE1;
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #EAA84B 0%, #E06D53 100%);
+      border-radius: var(--radius-full);
+      transition: width 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    }
+
+    /* 新增清單項目快速輸入列 */
+    .add-item-card {
+      display: flex;
+      gap: 8px;
+      background: var(--card-bg);
+      padding: 6px 6px 6px 16px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      align-items: center;
+    }
+
+    .add-item-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--text-dark);
+      outline: none;
+    }
+
+    .btn-add-item {
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(224, 109, 83, 0.3);
+      white-space: nowrap;
+      transition: transform 0.15s;
+    }
+
+    .btn-add-item:active {
+      transform: scale(0.95);
+    }
+
+    /* 列表清單容器 */
+    .checklist-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* 清單每項：列表式、大方點擊、整列可點 */
+    .checklist-item {
+      background: var(--card-bg);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+      user-select: none;
+    }
+
+    .checklist-item:active {
+      transform: scale(0.98);
+      background: #FAF7F2;
+    }
+
+    /* 空心方塊 (未完成狀態) */
+    .checkbox-square {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border: 2px solid #C2B7AA;
+      border-radius: 6px;
+      background: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-sizing: border-box;
+    }
+
+    /* 點選打勾狀態 (已完成) */
+    .checklist-item.completed .checkbox-square {
+      background: var(--accent-coral);
+      border-color: var(--accent-coral);
+      transform: scale(1.05);
+    }
+
+    .checklist-item.completed .checkbox-square::after {
+      content: "✓";
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    /* 後方文字與刪除線 */
+    .item-label-text {
+      flex: 1;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-dark);
+      line-height: 1.4;
+      word-break: break-word;
+      transition: all 0.2s ease;
+    }
+
+    .checklist-item.completed .item-label-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+
+    /* 單項刪除小按鈕 */
+    .btn-del-item {
+      background: transparent;
+      border: none;
+      color: #C0B7AC;
+      font-size: 15px;
+      padding: 6px 8px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.15s;
+    }
+
+    .btn-del-item:active {
+      color: #D3452B;
+      background: #FFF1EE;
+    }
+
+    /* 右側操作按鈕區（包含刪除與拖曳手把） */
+    .item-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    /* 拖曳把手（支援滑鼠與 iPhone 觸控） */
+    .drag-handle {
+      color: #C0B7AC;
+      font-size: 16px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+      color: var(--accent-coral);
+      background: var(--accent-coral-soft);
+    }
+
+    /* 正在拖曳中的項目外觀（微浮起、虛線高亮） */
+    .checklist-item.dragging {
+      opacity: 0.85;
+      background: #FFFBF7 !important;
+      border: 2px dashed var(--accent-coral) !important;
+      box-shadow: 0 12px 28px rgba(224, 109, 83, 0.25) !important;
+      transform: scale(1.02);
+      z-index: 10;
+    }
+
+    /* 清單控制工具列 */
+    .checklist-tools {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+      font-size: 12px;
+    }
+
+    .btn-reset-checklist {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* ========== 階段四：行程安排樣式 ========== */
+    .itinerary-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    /* 天數切換滑動容器（支援左右點擊滑動與電腦滾輪） */
+    .day-nav-container {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+      position: relative;
+    }
+
+    .btn-day-scroll {
+      width: 32px;
+      height: 32px;
+      min-width: 32px;
+      border-radius: var(--radius-full);
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-warm);
+      color: var(--text-dark);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-soft);
+      transition: all 0.15s;
+      z-index: 2;
+    }
+
+    .btn-day-scroll:active {
+      transform: scale(0.92);
+      background: #F4EFE6;
+    }
+
+    .day-nav-wrapper {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      padding: 4px 2px 6px 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .day-nav-wrapper::-webkit-scrollbar {
+      display: none;
+    }
+
+    .day-tab-pill {
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      background: var(--card-bg);
+      border: 1.5px solid var(--border-warm);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .day-tab-pill.active {
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      border-color: var(--accent-coral);
+      box-shadow: 0 4px 14px rgba(224, 109, 83, 0.35);
+    }
+
+    .btn-add-day {
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      background: #F4EFE6;
+      border: 1.5px dashed var(--border-warm);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-add-day:active {
+      background: #E8E0D2;
+    }
+
+    /* 行程頂部抬頭區 */
+    .itinerary-header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+
+    .itinerary-day-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-open-add-itin {
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 4px 12px rgba(224, 109, 83, 0.3);
+      transition: transform 0.15s;
+    }
+    .btn-open-add-itin:active {
+      transform: scale(0.96);
+    }
+
+    /* 時間軸容器 */
+    .timeline-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-left: 20px;
+      margin-left: 6px;
+    }
+
+    /* 時間軸左側垂直連接線 */
+    .timeline-container::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 18px;
+      bottom: 24px;
+      width: 2px;
+      background: #E5DDD0;
+      border-radius: 2px;
+    }
+
+    /* 時間軸單項卡片 */
+    .timeline-card {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--border-warm);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    /* 行程拖曳中外觀（虛線、微浮起、柔和陰影） */
+    .timeline-card.dragging {
+      opacity: 0.85;
+      background: #FFFBF7 !important;
+      border: 2px dashed var(--accent-coral) !important;
+      box-shadow: 0 12px 28px rgba(224, 109, 83, 0.25) !important;
+      transform: scale(1.02);
+      z-index: 10;
+    }
+
+    /* 行程專用拖曳手把 */
+    .timeline-drag-handle {
+      color: #C0B7AC;
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .timeline-drag-handle:active {
+      cursor: grabbing;
+      color: var(--accent-coral);
+      background: var(--accent-coral-soft);
+    }
+
+    /* 時間軸左側精緻圓點標記 */
+    .timeline-card::before {
+      content: "";
+      position: absolute;
+      left: -20px;
+      top: 20px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-coral);
+      box-shadow: 0 0 0 3px var(--accent-coral-soft);
+      z-index: 2;
+    }
+
+    .timeline-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .timeline-time-badge {
+      background: var(--accent-matcha-soft);
+      color: var(--accent-matcha);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .timeline-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-dark);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .timeline-location {
+      font-size: 12px;
+      color: var(--accent-coral);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #FAF7F2;
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      width: fit-content;
+      font-weight: 600;
+    }
+
+    .timeline-note {
+      font-size: 13px;
+      color: #5C554D;
+      background: #FDFBF8;
+      border-left: 3px solid var(--accent-coral-soft);
+      padding: 8px 12px;
+      border-radius: 0 8px 8px 0;
+      line-height: 1.5;
+      white-space: pre-line;
+      word-break: break-word;
+    }
+
+    .timeline-card-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 6px;
+      margin-top: 2px;
+      border-top: 1px dashed var(--border-warm);
+      padding-top: 8px;
+    }
+
+    /* 空行程提示 */
+    .itinerary-empty {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 36px 20px;
+      text-align: center;
+      border: 1px dashed var(--border-warm);
+      color: var(--text-muted);
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ========== 階段五：旅遊採買樣式 ========== */
+    .shopping-section {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    /* 採買花費統計卡片 */
+    .shopping-stats-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-warm);
+    }
+
+    .stats-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .stats-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stats-icon {
+      font-size: 20px;
+    }
+
+    .stats-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .btn-clear-bought {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 2px 4px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat-box {
+      background: #FAF7F2;
+      border-radius: var(--radius-sm);
+      padding: 10px 8px;
+      text-align: center;
+      border: 1px solid var(--border-warm);
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-dark);
+    }
+
+    .stat-value.bought {
+      color: var(--accent-coral);
+    }
+
+    /* 快速新增採買欄位 */
+    .shopping-quick-add {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1.5px solid var(--border-warm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shop-input-title {
+      width: 100%;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      font-size: 14px;
+      background: #FAF7F2;
+      color: var(--text-dark);
+      outline: none;
+    }
+
+    .shop-input-title:focus {
+      border-color: var(--accent-coral);
+      background: #FFFFFF;
+    }
+
+    .shop-quick-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .shop-price-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .shop-currency-label {
+      position: absolute;
+      left: 10px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .shop-input-price {
+      width: 100%;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-sm);
+      padding: 9px 10px 9px 24px;
+      font-size: 14px;
+      background: #FAF7F2;
+      color: var(--text-dark);
+      outline: none;
+    }
+
+    .shop-input-price:focus {
+      border-color: var(--accent-coral);
+      background: #FFFFFF;
+    }
+
+    .btn-add-shop {
+      padding: 10px 18px;
+      border-radius: var(--radius-full);
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      border: none;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(224, 109, 83, 0.3);
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .btn-add-shop:active {
+      transform: scale(0.96);
+    }
+
+    /* 採買清單列表 */
+    .shopping-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .shopping-item-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      box-shadow: var(--shadow-soft);
+      border: 1px solid var(--border-warm);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .shopping-item-card:active {
+      background: #FFFDF9;
+    }
+
+    .shopping-item-card.dragging {
+      opacity: 0.85;
+      background: #FFFBF7 !important;
+      border: 2px dashed var(--accent-coral) !important;
+      box-shadow: 0 12px 28px rgba(224, 109, 83, 0.25) !important;
+      transform: scale(1.02);
+      z-index: 10;
+    }
+
+    /* 打勾方塊 (空心方塊) */
+    .shop-checkbox-square {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      border: 2px solid #C5BCB1;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* 已買打勾狀態 */
+    .shopping-item-card.bought .shop-checkbox-square {
+      background: var(--accent-matcha);
+      border-color: var(--accent-matcha);
+      transform: scale(1.05);
+    }
+
+    .shopping-item-card.bought .shop-checkbox-square::after {
+      content: "✓";
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .shop-item-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .shop-item-top {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .shop-item-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dark);
+      line-height: 1.3;
+      word-break: break-word;
+      transition: all 0.2s;
+    }
+
+    .shopping-item-card.bought .shop-item-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+      opacity: 0.65;
+    }
+
+    .shop-price-tag {
+      background: #FAF7F2;
+      color: var(--accent-coral);
+      border: 1px solid rgba(224, 109, 83, 0.2);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .shopping-item-card.bought .shop-price-tag {
+      background: #F0F4F1;
+      color: var(--accent-matcha);
+      border-color: rgba(106, 131, 114, 0.25);
+    }
+
+    .shop-item-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .shop-actions-right {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .btn-edit-shop {
+      background: transparent;
+      border: none;
+      color: #C0B7AC;
+      font-size: 14px;
+      padding: 6px 7px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      line-height: 1;
+      transition: all 0.15s;
+    }
+
+    .btn-edit-shop:active {
+      color: var(--accent-coral);
+      background: var(--accent-coral-soft);
+    }
+
+    .shop-drag-handle {
+      color: #C0B7AC;
+      font-size: 16px;
+      padding: 6px 7px;
+      border-radius: var(--radius-sm);
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .shop-drag-handle:active {
+      cursor: grabbing;
+      color: var(--accent-coral);
+      background: var(--accent-coral-soft);
+    }
+
+    /* 詳情頁底部三大功能導覽列 */
+    .bottom-tab-bar {
+      position: sticky;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border-warm);
+      display: flex;
+      padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 10px));
+      z-index: 25;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 6px 0;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-coral);
+    }
+
+    .tab-btn .tab-icon {
+      font-size: 20px;
+    }
+
+    /* ========== 彈出表單視窗（新增 / 編輯旅程） ========== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 38, 30, 0.45);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: flex-end; /* iPhone 底部上滑選單樣式 */
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-dialog {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 440px;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px calc(24px + env(safe-area-inset-bottom, 12px));
+      box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.15);
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .modal-overlay.open .modal-dialog {
+      transform: translateY(0);
+    }
+
+    /* 上方可愛小拉條 */
+    .modal-handle {
+      width: 38px;
+      height: 4px;
+      background: var(--border-warm);
+      border-radius: var(--radius-full);
+      margin: 0 auto -4px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .modal-close-btn {
+      background: #F4EFE6;
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-full);
+      font-size: 16px;
+      color: var(--text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 表單項目 */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 13px 16px;
+      border: 1.5px solid var(--border-warm);
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      color: var(--text-dark);
+      background: #FAF8F5;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-input:focus {
+      background: #FFFFFF;
+      border-color: var(--accent-coral);
+      box-shadow: 0 0 0 4px var(--accent-coral-soft);
+    }
+
+    .date-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .date-row .form-group {
+      flex: 1;
+    }
+
+    /* 圖示選擇小標籤 */
+    .icon-picker-grid {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .icon-opt-btn {
+      min-width: 46px;
+      height: 46px;
+      border-radius: var(--radius-sm);
+      background: #FAF8F5;
+      border: 2px solid transparent;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .icon-opt-btn.selected {
+      background: var(--accent-coral-soft);
+      border-color: var(--accent-coral);
+      transform: scale(1.05);
+    }
+
+    /* 表單操作按鈕 */
+    .form-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-form-cancel {
+      flex: 1;
+      padding: 14px 0;
+      border-radius: var(--radius-full);
+      background: #F4EFE6;
+      border: none;
+      color: var(--text-dark);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-form-submit {
+      flex: 2;
+      padding: 14px 0;
+      border-radius: var(--radius-full);
+      background: var(--accent-coral);
+      border: none;
+      color: #FFFFFF;
+      font-size: 15px;
+      font-weight: 700;
+      box-shadow: 0 6px 18px rgba(224, 109, 83, 0.35);
+      cursor: pointer;
+    }
+
+    .btn-form-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* ========== 簡易確認刪除彈窗 ========== */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(45, 38, 30, 0.45);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 120;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .confirm-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .confirm-box {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 320px;
+      border-radius: var(--radius-lg);
+      padding: 24px 20px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .confirm-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .confirm-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .confirm-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .confirm-actions button {
+      flex: 1;
+      padding: 11px 0;
+      border-radius: var(--radius-full);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-confirm-cancel {
+      background: #F4EFE6;
+      color: var(--text-dark);
+    }
+
+    .btn-confirm-ok {
+      background: #D3452B;
+      color: #FFFFFF;
+    }
+
+    /* 頂部教學按鈕 */
+    .btn-guide-pill {
+      background: #F4EFE6;
+      border: 1px solid var(--border-warm);
+      color: var(--text-dark);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+
+    .btn-guide-pill:active {
+      transform: scale(0.95);
+      background: var(--accent-coral-soft);
+      border-color: var(--accent-coral);
+    }
+
+    /* 手機教學彈窗內容樣式 */
+    .guide-step-card {
+      background: #FAF8F5;
+      border: 1px solid var(--border-warm);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .guide-step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--accent-coral);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 6px;
+    }
+
+    .guide-step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-dark);
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .guide-step-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .guide-tip-box {
+      background: #EEF3F0;
+      border: 1px solid rgba(106, 131, 114, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      font-size: 12px;
+      color: var(--text-dark);
+      line-height: 1.5;
+      margin-top: 12px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div id="app-container">
+    
+    <!-- 頂部標頭 -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">✈️</div>
+        <div>
+          <div class="brand-title">Travel 旅程小秘書</div>
+          <div class="brand-subtitle">離線隨身行囊・美好出發</div>
+        </div>
+      </div>
+      <button type="button" class="btn-guide-pill" onclick="openGuideModal()" title="查看如何放入 iPhone">
+        📱 手機使用教學
+      </button>
+    </header>
+
+    <!-- 視圖一：旅程首頁列表 -->
+    <main id="home-view" class="view-content">
+      <!-- 溫暖歡迎卡片 -->
+      <section class="welcome-card">
+        <div class="welcome-text">
+          <h2>今日的冒險準備好了嗎？</h2>
+          <p>記錄每個難忘的足跡與採買</p>
+        </div>
+        <div class="trip-badge-count" id="trip-count-badge">0 個旅程</div>
+      </section>
+
+      <!-- 旅程大圖示列表 -->
+      <section>
+        <div class="section-header">
+          <div class="section-title">我的旅程計畫</div>
+        </div>
+        <div id="trips-grid-container" class="trips-grid" style="margin-top: 12px;">
+          <!-- 旅程卡片會由 JavaScript 動態生成渲染在此 -->
+        </div>
+      </section>
+    </main>
+
+    <!-- 視圖二：進入某個旅程後的詳情畫面（後續階段骨架） -->
+    <main id="detail-view" class="detail-view">
+      <div class="detail-header">
+        <button class="btn-back-home" id="btn-back-home" onclick="showHomeView()">
+          ‹ 返回旅程
+        </button>
+        <div class="detail-trip-badge">
+          <span class="badge-icon" id="detail-trip-icon">🌸</span>
+          <span class="badge-name" id="detail-trip-name">京都五日賞櫻</span>
+        </div>
+      </div>
+
+      <div class="view-content">
+        <div class="welcome-card">
+          <div class="welcome-text">
+            <h2 id="detail-welcome-title">旅程籌劃中</h2>
+            <p id="detail-welcome-dates">2026/10/20 - 2026/10/25</p>
+          </div>
+        </div>
+
+        <!-- 階段三：準備物品清單分頁 -->
+        <section id="tab-checklist-content" class="checklist-section">
+          <!-- 行李準備進度 -->
+          <div class="progress-card">
+            <div class="progress-info">
+              <span class="progress-title-text">🎒 行李打包進度</span>
+              <span class="progress-count-pill" id="checklist-progress-pill">0 / 0 (0%)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="checklist-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+
+          <!-- 新增準備物品快速輸入欄 -->
+          <div class="add-item-card">
+            <input type="text" id="new-checklist-input" class="add-item-input" placeholder="＋ 輸入要準備的物品（如：行動電源）" onkeydown="if(event.key==='Enter') addChecklistItem()">
+            <button type="button" class="btn-add-item" onclick="addChecklistItem()">加入物品</button>
+          </div>
+
+          <!-- 工具列 -->
+          <div class="checklist-tools">
+            <span style="color: var(--text-muted);">點擊打勾・拖曳 ☰ 調順序</span>
+            <button type="button" class="btn-reset-checklist" onclick="resetAllChecklist()">全部取消打勾</button>
+          </div>
+
+          <!-- 物品清單列表容器 -->
+          <div id="checklist-container" class="checklist-list">
+            <!-- 由 JavaScript 動態生成每一列 -->
+          </div>
+        </section>
+
+        <!-- 階段四：行程安排分頁 -->
+        <section id="tab-itinerary-content" class="itinerary-section" style="display: none;">
+          <!-- 天數橫向切換滑動列（含左右箭頭方便翻頁） -->
+          <div class="day-nav-container">
+            <button type="button" class="btn-day-scroll" onclick="scrollDayNav(-1)" title="往前">‹</button>
+            <div class="day-nav-wrapper" id="itinerary-day-tabs">
+              <!-- 由 JS 動態生成 Day 1, Day 2, Day 3... 與 ＋ 新增天數 -->
+            </div>
+            <button type="button" class="btn-day-scroll" onclick="scrollDayNav(1)" title="往後">›</button>
+          </div>
+
+          <!-- 當日行程抬頭與快速新增 -->
+          <div class="itinerary-header-bar">
+            <div class="itinerary-day-title" id="current-day-heading">📅 第 1 天行程</div>
+            <button type="button" class="btn-open-add-itin" onclick="openAddItinModal()">
+              ＋ 新增景點活動
+            </button>
+          </div>
+
+          <!-- 時間軸列表容器（支援拖曳 ☰ 調整順序） -->
+          <div class="timeline-container" id="timeline-items-container">
+            <!-- 由 JS 動態生成當天行程時間軸卡片 -->
+          </div>
+        </section>
+
+        <!-- 階段五：旅遊採買分頁 -->
+        <section id="tab-shopping-content" class="shopping-section" style="display: none;">
+          <!-- 採買花費統計卡片 -->
+          <div class="shopping-stats-card">
+            <div class="stats-top">
+              <div class="stats-title-group">
+                <span class="stats-icon">🛍️</span>
+                <span class="stats-title">採買記帳總覽</span>
+              </div>
+              <button type="button" class="btn-clear-bought" onclick="resetAllShoppingBought()" title="全部設為未購買">
+                全部重設未買
+              </button>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-box">
+                <div class="stat-label">總預計金額</div>
+                <div class="stat-value" id="shopping-total-amount">0</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">已採買花費</div>
+                <div class="stat-value bought" id="shopping-bought-amount">0</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">待買進度</div>
+                <div class="stat-value" id="shopping-progress-pill">0 / 0 件</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 快速新增採買項目輸入區 -->
+          <div class="shopping-quick-add">
+            <input type="text" id="new-shop-title" class="shop-input-title" placeholder="輸入想買的伴手禮或物品名稱..." maxlength="40">
+            <div class="shop-quick-row">
+              <div class="shop-price-wrapper">
+                <span class="shop-currency-label">$</span>
+                <input type="number" id="new-shop-price" class="shop-input-price" placeholder="金額 (選填)" min="0" step="1">
+              </div>
+              <button type="button" class="btn-add-shop" onclick="addQuickShoppingItem()">
+                ＋ 加入採買
+              </button>
+            </div>
+          </div>
+
+          <!-- 採買清單列表容器（支援拖曳 ☰ 調整順序） -->
+          <div class="shopping-list-container" id="shopping-items-container">
+            <!-- 由 JS 動態生成採買項目清單卡片 -->
+          </div>
+        </section>
+      </div>
+
+      <!-- 詳情頁底部三大功能分頁切換導覽列 -->
+      <nav class="bottom-tab-bar">
+        <button class="tab-btn active" id="tab-btn-checklist" onclick="switchDetailTab('checklist')">
+          <span class="tab-icon">🎒</span>
+          <span>準備清單</span>
+        </button>
+        <button class="tab-btn" id="tab-btn-itinerary" onclick="switchDetailTab('itinerary')">
+          <span class="tab-icon">📅</span>
+          <span>行程安排</span>
+        </button>
+        <button class="tab-btn" id="tab-btn-shopping" onclick="switchDetailTab('shopping')">
+          <span class="tab-icon">🛍️</span>
+          <span>旅遊採買</span>
+        </button>
+      </nav>
+    </main>
+
+    <!-- 浮動大「+」新增旅程按鈕 -->
+    <button class="fab-add-trip" id="fab-add-btn" onclick="openAddTripModal()" title="新增旅程">
+      +
+    </button>
+
+    <!-- 彈出表單視窗：新增 / 編輯旅程 -->
+    <div class="modal-overlay" id="trip-modal" onclick="onModalOverlayClick(event)">
+      <div class="modal-dialog">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title" id="modal-title">新增旅程</div>
+          <button class="modal-close-btn" onclick="closeTripModal()">✕</button>
+        </div>
+
+        <form id="trip-form" onsubmit="handleTripFormSubmit(event)">
+          <!-- 隱藏 ID，編輯時使用 -->
+          <input type="hidden" id="form-trip-id">
+
+          <!-- 旅程名稱 -->
+          <div class="form-group">
+            <label class="form-label" for="trip-name-input">旅程名稱 *</label>
+            <input type="text" id="trip-name-input" class="form-input" placeholder="例如：2026 東京賞櫻 5 日遊" required maxlength="40">
+          </div>
+
+          <!-- 可愛代表圖示選擇 -->
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label">選擇代表圖示</label>
+            <div class="icon-picker-grid" id="icon-picker">
+              <button type="button" class="icon-opt-btn selected" data-icon="🌸" onclick="selectIcon('🌸')">🌸</button>
+              <button type="button" class="icon-opt-btn" data-icon="✈️" onclick="selectIcon('✈️')">✈️</button>
+              <button type="button" class="icon-opt-btn" data-icon="🗻" onclick="selectIcon('🗻')">🗻</button>
+              <button type="button" class="icon-opt-btn" data-icon="⛩️" onclick="selectIcon('⛩️')">⛩️</button>
+              <button type="button" class="icon-opt-btn" data-icon="🏝️" onclick="selectIcon('🏝️')">🏝️</button>
+              <button type="button" class="icon-opt-btn" data-icon="🧳" onclick="selectIcon('🧳')">🧳</button>
+              <button type="button" class="icon-opt-btn" data-icon="☕" onclick="selectIcon('☕')">☕</button>
+              <button type="button" class="icon-opt-btn" data-icon="♨️" onclick="selectIcon('♨️')">♨️</button>
+            </div>
+            <input type="hidden" id="selected-icon-input" value="🌸">
+          </div>
+
+          <!-- 日期選擇區 -->
+          <div class="date-row" style="margin-top: 10px;">
+            <div class="form-group">
+              <label class="form-label" for="start-date-input">出發日期</label>
+              <input type="date" id="start-date-input" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="end-date-input">結束日期</label>
+              <input type="date" id="end-date-input" class="form-input">
+            </div>
+          </div>
+
+          <!-- 操作按鈕 -->
+          <div class="form-actions" style="margin-top: 16px;">
+            <button type="button" class="btn-form-cancel" onclick="closeTripModal()">取消</button>
+            <button type="submit" class="btn-form-submit" id="btn-submit-text">確認儲存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 刪除確認彈窗 -->
+    <div class="confirm-overlay" id="confirm-modal">
+      <div class="confirm-box">
+        <div style="font-size: 38px;">🗑️</div>
+        <div class="confirm-title">確定要刪除這個旅程嗎？</div>
+        <div class="confirm-desc" id="confirm-trip-name">此旅程內的所有行程、清單與採買紀錄都將一併移除。</div>
+        <div class="confirm-actions">
+          <button class="btn-confirm-cancel" onclick="closeConfirmModal()">取消留著</button>
+          <button class="btn-confirm-ok" id="btn-confirm-delete-action">確定刪除</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 彈出表單視窗：新增 / 編輯行程活動 -->
+    <div class="modal-overlay" id="itin-modal" onclick="onItinModalOverlayClick(event)">
+      <div class="modal-dialog">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title" id="itin-modal-title">新增行程活動</div>
+          <button class="modal-close-btn" onclick="closeItinModal()">✕</button>
+        </div>
+
+        <form id="itin-form" onsubmit="handleItinFormSubmit(event)">
+          <!-- 隱藏 ID 與天數 -->
+          <input type="hidden" id="form-itin-id">
+
+          <div class="date-row">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="itin-time-input">時間（如 09:30）</label>
+              <input type="text" id="itin-time-input" class="form-input" placeholder="例如：09:30">
+            </div>
+            <div class="form-group" style="flex: 1.2;">
+              <label class="form-label" for="itin-location-input">地點 / 景點</label>
+              <input type="text" id="itin-location-input" class="form-input" placeholder="例如：清水寺">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label" for="itin-title-input">活動內容 / 景點名稱 *</label>
+            <input type="text" id="itin-title-input" class="form-input" placeholder="例如：漫步二三年坂、品嚐抹茶" required>
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label" for="itin-note-input">隨手筆記 / 交通備忘</label>
+            <textarea id="itin-note-input" class="form-input" rows="3" placeholder="例如：門票 400 日圓、搭乘市營巴士 207 號" style="resize: none;"></textarea>
+          </div>
+
+          <div class="form-actions" style="margin-top: 16px;">
+            <button type="button" class="btn-form-cancel" onclick="closeItinModal()">取消</button>
+            <button type="submit" class="btn-form-submit" id="btn-itin-submit">儲存行程</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 彈出表單視窗：編輯採買項目（備註、金額等） -->
+    <div class="modal-overlay" id="shop-edit-modal" onclick="onShopModalOverlayClick(event)">
+      <div class="modal-dialog">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title" id="shop-edit-modal-title">編輯採買項目</div>
+          <button class="modal-close-btn" onclick="closeShopModal()">✕</button>
+        </div>
+
+        <form id="shop-edit-form" onsubmit="handleShopEditFormSubmit(event)">
+          <input type="hidden" id="form-shop-id">
+
+          <div class="form-group">
+            <label class="form-label" for="shop-edit-name-input">物品名稱 *</label>
+            <input type="text" id="shop-edit-name-input" class="form-input" placeholder="例如：生八橋、抹茶餅乾" required maxlength="40">
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label" for="shop-edit-price-input">預計 / 實際花費金額</label>
+            <input type="number" id="shop-edit-price-input" class="form-input" placeholder="例如：1200" min="0" step="1">
+          </div>
+
+          <div class="form-group" style="margin-top: 10px;">
+            <label class="form-label" for="shop-edit-note-input">備註說明（代購對象 / 店家資訊）</label>
+            <textarea id="shop-edit-note-input" class="form-input" rows="2" placeholder="例如：幫同事代購 2 盒、京都車站前購買" style="resize: none;"></textarea>
+          </div>
+
+          <div class="form-actions" style="margin-top: 16px;">
+            <button type="button" class="btn-form-cancel" onclick="closeShopModal()">取消</button>
+            <button type="submit" class="btn-form-submit">儲存修改</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 彈出視窗：iPhone 手機使用與傳輸教學 -->
+    <div class="modal-overlay" id="guide-modal" onclick="onGuideModalOverlayClick(event)">
+      <div class="modal-dialog" style="max-height: 85vh; overflow-y: auto;">
+        <div class="modal-handle"></div>
+        <div class="modal-header">
+          <div class="modal-title">📱 如何放入 iPhone 離線使用</div>
+          <button class="modal-close-btn" onclick="closeGuideModal()">✕</button>
+        </div>
+
+        <div style="margin-top: 14px;">
+          <!-- 步驟 1 -->
+          <div class="guide-step-card">
+            <div class="guide-step-title">
+              <span class="guide-step-num">1</span> 傳送檔案到手機
+            </div>
+            <div class="guide-step-desc">
+              將電腦桌面上的 <b>Travel</b> 資料夾（包含 <code>index.html</code>），透過以下任一方式傳至 iPhone：<br>
+              ・<b>Mac 電腦</b>：直接對資料夾按右鍵 ➔ <b>AirDrop</b> 傳送到 iPhone。<br>
+              ・<b>Windows 電腦</b>：將 <code>index.html</code> 透過 LINE、Email、雲端硬碟（Google Drive / iCloud）傳給自己，並在手機上下載儲存到<b>「檔案」App</b>中。
+            </div>
+          </div>
+
+          <!-- 步驟 2 -->
+          <div class="guide-step-card">
+            <div class="guide-step-title">
+              <span class="guide-step-num">2</span> 在 iPhone 上用 Safari 打開
+            </div>
+            <div class="guide-step-desc">
+              在 iPhone 開啟<b>「檔案」App</b>，找到傳進來的 <code>index.html</code> 點擊打開；或者用 <b>Safari 瀏覽器</b> 開啟它。
+            </div>
+          </div>
+
+          <!-- 步驟 3 -->
+          <div class="guide-step-card">
+            <div class="guide-step-title">
+              <span class="guide-step-num">3</span> 加入主畫面（變成專屬 App）
+            </div>
+            <div class="guide-step-desc">
+              在 Safari 底部點擊 <b>「分享」按鈕</b>（一個向上的箭頭圖示 ⎋），在選單中往下滑找到並點擊 <b>「加入主畫面」</b> ➔ 點右上角<b>「新增」</b>。
+            </div>
+          </div>
+
+          <!-- 貼心提示 -->
+          <div class="guide-tip-box">
+            💡 <b>完全純離線！</b><br>
+            加入主畫面後，桌面上會出現可愛的「Travel」專屬圖示。即使出國在飛機上開飛航模式或無網路環境，點開它就能秒開，新增行程、行李打勾與採買記帳都能正常使用且自動存檔！
+          </div>
+
+          <div class="form-actions" style="margin-top: 18px;">
+            <button type="button" class="btn-form-submit" onclick="closeGuideModal()" style="width: 100%;">
+              我知道了，開始使用！
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ========== 本機資料管理（純離線 LocalStorage） ========== */
+    const STORAGE_KEY = 'travel_app_trips';
+    let trips = [];
+    let currentDeletingTripId = null;
+    let selectedIcon = '🌸';
+
+    let currentActiveTripId = null;
+
+    // 階段三：準備物品清單預設範本
+    const DEFAULT_CHECKLIST = [
+      { id: 'chk_1', text: '護照正本（有效期限需 6 個月以上）與機票憑證', checked: true },
+      { id: 'chk_2', text: '外幣現鈔、雙幣信用卡與交通卡（如 Suica / 八達通）', checked: true },
+      { id: 'chk_3', text: '手機充電線、旅充頭與大容量行動電源', checked: false },
+      { id: 'chk_4', text: '海外漫遊上網卡（eSIM 或實體 SIM 卡）', checked: false },
+      { id: 'chk_5', text: '換洗衣物、貼身衣物、輕便外套與好走的鞋', checked: false },
+      { id: 'chk_6', text: '個人常備藥品（感冒、胃腸、止痛、過敏藥）', checked: false },
+      { id: 'chk_7', text: '牙刷毛巾、分裝保養品與折疊防曬傘', checked: false }
+    ];
+
+    // 階段四：行程安排預設範本
+    const DEFAULT_ITINERARY = [
+      {
+        id: 'itin_1',
+        day: 1,
+        time: '09:30',
+        title: '關西國際機場抵達 ➔ 搭 HARUKA 特急前往京都',
+        location: '關西機場 / 京都車站',
+        note: '在車站櫃台領取預約好的 ICOCA 交通卡，先至飯店辦理寄放大型行李。'
+      },
+      {
+        id: 'itin_2',
+        day: 1,
+        time: '14:00',
+        title: '清水寺漫步賞櫻與二三年坂老街散策',
+        location: '音羽山 清水寺',
+        note: '參拜門票 400 日圓，順道去三年坂品嚐抹茶冰淇淋與採買伴手禮。'
+      },
+      {
+        id: 'itin_3',
+        day: 1,
+        time: '18:30',
+        title: '祇園白川夜櫻散策與湯豆腐料理晚餐',
+        location: '祇園白川',
+        note: '夜晚石疊小路點燈氣氛優美，晚餐享用道地湯豆腐宴席料理。'
+      },
+      {
+        id: 'itin_4',
+        day: 2,
+        time: '08:30',
+        title: '伏見稻荷大社 千本鳥居巡禮',
+        location: '伏見稻荷大社',
+        note: '清晨人潮較少適合拍照取景，記得穿著好走的運動鞋。'
+      },
+      {
+        id: 'itin_5',
+        day: 2,
+        time: '12:30',
+        title: '錦市場在地道地美食吃透透',
+        location: '錦市場商店街',
+        note: '品嚐知名豆乳甜甜圈、三木雞卵厚蛋燒、章魚燒串。'
+      },
+      {
+        id: 'itin_6',
+        day: 2,
+        time: '15:30',
+        title: '金閣寺（鹿苑寺）金色倒影',
+        location: '金閣寺',
+        note: '下午順光拍攝金閣寺在鏡湖池的金色倒影最壯觀。'
+      },
+      {
+        id: 'itin_7',
+        day: 3,
+        time: '09:00',
+        title: '嵐山渡月橋與竹林之道漫步',
+        location: '嵐山景區',
+        note: '搭乘嵯峨野觀光小火車，感受竹林微風與天然禪意。'
+      }
+    ];
+
+    // 階段五：旅遊採買預設範本
+    const DEFAULT_SHOPPING = [
+      { id: 'shop_1', name: '生八橋（經典肉桂與抹茶生菓子）', price: 1200, bought: false, note: '京都車站手信街購買，送禮給家人' },
+      { id: 'shop_2', name: '宇治抹茶粉與抹茶夾心餅乾', price: 2500, bought: true, note: '伊藤久右衛門或辻利' },
+      { id: 'shop_3', name: '清水寺開運櫻花御守', price: 800, bought: false, note: '清水寺本堂參拜時求取' },
+      { id: 'shop_4', name: '藥妝店美白面膜與蒸氣眼罩', price: 3600, bought: false, note: '唐吉訶德或松本清免稅採購' }
+    ];
+
+    // 啟動時讀取資料
+    function initApp() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          trips = JSON.parse(raw);
+        } else {
+          // 首次無資料時，貼心提供一個預設示範旅程
+          trips = [
+            {
+              id: 'trip_' + Date.now(),
+              name: '2026 日本京都賞櫻行',
+              icon: '🌸',
+              startDate: '2026-03-28',
+              endDate: '2026-04-02',
+              checklist: JSON.parse(JSON.stringify(DEFAULT_CHECKLIST)),
+              itinerary: JSON.parse(JSON.stringify(DEFAULT_ITINERARY)),
+              shopping: JSON.parse(JSON.stringify(DEFAULT_SHOPPING)),
+              createdAt: Date.now()
+            }
+          ];
+          saveTrips();
+        }
+
+        // 確保既有旅程也擁有 checklist, itinerary 與 shopping 欄位
+        trips.forEach(trip => {
+          if (!trip.checklist || !Array.isArray(trip.checklist)) {
+            trip.checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+          }
+          if (!trip.itinerary || !Array.isArray(trip.itinerary)) {
+            trip.itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+          }
+          if (!trip.shopping || !Array.isArray(trip.shopping)) {
+            trip.shopping = JSON.parse(JSON.stringify(DEFAULT_SHOPPING));
+          }
+        });
+        saveTrips();
+      } catch (e) {
+        trips = [];
+      }
+      renderTrips();
+    }
+
+    // 儲存至本機
+    function saveTrips() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
+    }
+
+    // 計算兩個日期的天數差異
+    function formatTripDays(start, end) {
+      if (!start) return '尚未設定出發日';
+      if (!end) return `${start} 出發`;
+      
+      const s = new Date(start);
+      const e = new Date(end);
+      const diffTime = e - s;
+      if (isNaN(diffTime) || diffTime < 0) {
+        return `${start} ~ ${end}`;
+      }
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      return `${diffDays} 天行程 (${start.slice(5)} - ${end.slice(5)})`;
+    }
+
+    // 畫面渲染：繪製所有旅程大圖示卡片
+    function renderTrips() {
+      const container = document.getElementById('trips-grid-container');
+      const countBadge = document.getElementById('trip-count-badge');
+      
+      countBadge.textContent = `${trips.length} 個旅程`;
+
+      if (trips.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-icon">🧳</div>
+            <div class="empty-title">目前還沒有任何旅程</div>
+            <div class="empty-desc">點擊右下角的「+」大按鈕，規劃您的第一趟夢想之旅吧！</div>
+            <button class="btn-empty-add" onclick="openAddTripModal()">+ 新增第一筆旅程</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = trips.map(trip => {
+        const daysText = formatTripDays(trip.startDate, trip.endDate);
+        const checklistCount = trip.checklist ? trip.checklist.length : 0;
+        const checkedCount = trip.checklist ? trip.checklist.filter(i => i.checked).length : 0;
+        return `
+          <div class="trip-card" onclick="enterTripDetail('${trip.id}')">
+            <div class="trip-icon-wrapper">
+              ${trip.icon || '✈️'}
+            </div>
+            <div class="trip-name">${escapeHtml(trip.name)}</div>
+            <div class="trip-date-pill">${daysText}</div>
+            <div class="trip-days-badge">🎒 清單已備 ${checkedCount}/${checklistCount}</div>
+            
+            <div class="card-actions" onclick="event.stopPropagation()">
+              <button class="btn-card-action btn-edit" onclick="openEditTripModal('${trip.id}')">
+                ✎ 編輯
+              </button>
+              <button class="btn-card-action btn-delete" onclick="askDeleteTrip('${trip.id}')">
+                🗑 刪除
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 圖示選擇功能
+    function selectIcon(icon) {
+      selectedIcon = icon;
+      document.getElementById('selected-icon-input').value = icon;
+      document.querySelectorAll('.icon-opt-btn').forEach(btn => {
+        if (btn.getAttribute('data-icon') === icon) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    }
+
+    // 開啟「新增旅程」視窗
+    function openAddTripModal() {
+      document.getElementById('modal-title').textContent = '新增旅程';
+      document.getElementById('btn-submit-text').textContent = '開始這趟旅程';
+      document.getElementById('form-trip-id').value = '';
+      document.getElementById('trip-name-input').value = '';
+      document.getElementById('start-date-input').value = '';
+      document.getElementById('end-date-input').value = '';
+      selectIcon('🌸');
+      document.getElementById('trip-modal').classList.add('open');
+      setTimeout(() => document.getElementById('trip-name-input').focus(), 150);
+    }
+
+    // 開啟「編輯旅程」視窗
+    function openEditTripModal(id) {
+      const trip = trips.find(t => t.id === id);
+      if (!trip) return;
+
+      document.getElementById('modal-title').textContent = '編輯旅程資訊';
+      document.getElementById('btn-submit-text').textContent = '儲存修改';
+      document.getElementById('form-trip-id').value = trip.id;
+      document.getElementById('trip-name-input').value = trip.name;
+      document.getElementById('start-date-input').value = trip.startDate || '';
+      document.getElementById('end-date-input').value = trip.endDate || '';
+      selectIcon(trip.icon || '🌸');
+      document.getElementById('trip-modal').classList.add('open');
+    }
+
+    // 關閉表單視窗
+    function closeTripModal() {
+      document.getElementById('trip-modal').classList.remove('open');
+    }
+
+    function onModalOverlayClick(e) {
+      if (e.target === document.getElementById('trip-modal')) {
+        closeTripModal();
+      }
+    }
+
+    // 處理新增 / 編輯儲存
+    function handleTripFormSubmit(e) {
+      e.preventDefault();
+      const tripId = document.getElementById('form-trip-id').value;
+      const name = document.getElementById('trip-name-input').value.trim();
+      const icon = document.getElementById('selected-icon-input').value;
+      const startDate = document.getElementById('start-date-input').value;
+      const endDate = document.getElementById('end-date-input').value;
+
+      if (!name) return;
+
+      if (tripId) {
+        // 編輯既有旅程
+        const index = trips.findIndex(t => t.id === tripId);
+        if (index !== -1) {
+          trips[index].name = name;
+          trips[index].icon = icon;
+          trips[index].startDate = startDate;
+          trips[index].endDate = endDate;
+        }
+      } else {
+        // 新增旅程（自動帶入常用行李清單範本）
+        const newTrip = {
+          id: 'trip_' + Date.now(),
+          name: name,
+          icon: icon,
+          startDate: startDate,
+          endDate: endDate,
+          checklist: JSON.parse(JSON.stringify(DEFAULT_CHECKLIST)),
+          itinerary: [],
+          createdAt: Date.now()
+        };
+        trips.unshift(newTrip); // 新增在最前面
+      }
+
+      saveTrips();
+      renderTrips();
+      closeTripModal();
+    }
+
+    // 刪除確認機制
+    function askDeleteTrip(id) {
+      const trip = trips.find(t => t.id === id);
+      if (!trip) return;
+
+      currentDeletingTripId = id;
+      document.getElementById('confirm-trip-name').textContent = `「${trip.name}」的所有行程、行李清單與採買記錄都將一併刪除。`;
+      document.getElementById('btn-confirm-delete-action').onclick = function() {
+        confirmDeleteTrip();
+      };
+      document.getElementById('confirm-modal').classList.add('open');
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.remove('open');
+      currentDeletingTripId = null;
+    }
+
+    function confirmDeleteTrip() {
+      if (!currentDeletingTripId) return;
+      trips = trips.filter(t => t.id !== currentDeletingTripId);
+      saveTrips();
+      renderTrips();
+      closeConfirmModal();
+    }
+
+    // 進入旅程詳情畫面
+    function enterTripDetail(id) {
+      const trip = trips.find(t => t.id === id);
+      if (!trip) return;
+
+      currentActiveTripId = id;
+      currentActiveDay = 1;
+
+      if (!trip.checklist || !Array.isArray(trip.checklist)) {
+        trip.checklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+      }
+      if (!trip.itinerary || !Array.isArray(trip.itinerary)) {
+        trip.itinerary = JSON.parse(JSON.stringify(DEFAULT_ITINERARY));
+      }
+      if (!trip.shopping || !Array.isArray(trip.shopping)) {
+        trip.shopping = JSON.parse(JSON.stringify(DEFAULT_SHOPPING));
+      }
+      saveTrips();
+
+      document.getElementById('detail-trip-icon').textContent = trip.icon || '✈️';
+      document.getElementById('detail-trip-name').textContent = trip.name;
+      document.getElementById('detail-welcome-title').textContent = trip.name;
+      document.getElementById('detail-welcome-dates').textContent = formatTripDays(trip.startDate, trip.endDate);
+
+      // 切換視圖
+      document.getElementById('home-view').style.display = 'none';
+      document.getElementById('fab-add-btn').style.display = 'none';
+      document.getElementById('detail-view').style.display = 'flex';
+      window.scrollTo(0, 0);
+
+      // 預設進入準備清單分頁
+      switchDetailTab('checklist');
+    }
+
+    // 返回旅程列表首頁
+    function showHomeView() {
+      document.getElementById('detail-view').style.display = 'none';
+      document.getElementById('home-view').style.display = 'flex';
+      document.getElementById('fab-add-btn').style.display = 'flex';
+      currentActiveTripId = null;
+      renderTrips(); // 更新首頁卡片上的進度顯示
+      window.scrollTo(0, 0);
+    }
+
+    /* ========== 階段三：準備物品清單核心邏輯 ========== */
+
+    // 渲染清單與進度
+    function renderChecklist() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      const list = trip.checklist || [];
+      const total = list.length;
+      const checked = list.filter(item => item.checked).length;
+      const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+
+      // 更新進度卡片
+      document.getElementById('checklist-progress-pill').textContent = `${checked} / ${total} 項 (${percent}%)`;
+      document.getElementById('checklist-progress-fill').style.width = `${percent}%`;
+
+      // 渲染列表：支援空心方塊、打勾、刪除線、拖曳移動順序
+      const container = document.getElementById('checklist-container');
+      if (total === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 24px 10px; color: var(--text-muted); font-size: 13px;">
+            目前清單空空的，在上方輸入物品並點「加入物品」開始準備吧！
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map((item, index) => {
+        const isCompleted = !!item.checked;
+        return `
+          <div class="checklist-item ${isCompleted ? 'completed' : ''}" 
+               data-id="${item.id}" 
+               data-index="${index}" 
+               draggable="true" 
+               onclick="toggleChecklistItem('${item.id}')">
+            <div class="checkbox-square"></div>
+            <div class="item-label-text">${escapeHtml(item.text)}</div>
+            <div class="item-actions-right" onclick="event.stopPropagation()">
+              <button type="button" class="btn-del-item" onclick="deleteChecklistItem(event, '${item.id}')" title="刪除此項目">✕</button>
+              <div class="drag-handle" title="按住拖曳調整順序">☰</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 初始化拖曳排序機制（支援電腦滑鼠與 iPhone 觸控）
+      initDragAndDrop();
+    }
+
+    // 拖曳排序機制
+    let mouseDraggedItem = null;
+    let touchDraggedItem = null;
+
+    function initDragAndDrop() {
+      const container = document.getElementById('checklist-container');
+      if (!container) return;
+
+      const items = container.querySelectorAll('.checklist-item');
+
+      items.forEach(item => {
+        // --- 1. 電腦滑鼠拖曳 ---
+        item.addEventListener('dragstart', (e) => {
+          if (e.target.closest('.btn-del-item')) {
+            e.preventDefault();
+            return;
+          }
+          mouseDraggedItem = item;
+          item.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', item.dataset.id);
+        });
+
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          mouseDraggedItem = null;
+          saveNewOrderFromDOM();
+        });
+
+        item.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!mouseDraggedItem || mouseDraggedItem === item) return;
+
+          const rect = item.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          if (e.clientY < midY) {
+            container.insertBefore(mouseDraggedItem, item);
+          } else {
+            container.insertBefore(mouseDraggedItem, item.nextSibling);
+          }
+        });
+
+        // --- 2. 手機觸控拖曳（iPhone / 觸控螢幕） ---
+        const handle = item.querySelector('.drag-handle');
+        if (handle) {
+          handle.addEventListener('touchstart', onTouchStart, { passive: false });
+          handle.addEventListener('touchmove', onTouchMove, { passive: false });
+          handle.addEventListener('touchend', onTouchEnd, { passive: false });
+          handle.addEventListener('touchcancel', onTouchEnd, { passive: false });
+        }
+      });
+    }
+
+    function onTouchStart(e) {
+      e.stopPropagation();
+      touchDraggedItem = this.closest('.checklist-item');
+      if (touchDraggedItem) {
+        touchDraggedItem.classList.add('dragging');
+        if (navigator.vibrate) navigator.vibrate(15);
+      }
+    }
+
+    function onTouchMove(e) {
+      if (!touchDraggedItem) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const touch = e.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!target) return;
+
+      const overItem = target.closest('.checklist-item');
+      const container = document.getElementById('checklist-container');
+      if (overItem && overItem !== touchDraggedItem && container.contains(overItem)) {
+        const rect = overItem.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (touch.clientY < midY) {
+          container.insertBefore(touchDraggedItem, overItem);
+        } else {
+          container.insertBefore(touchDraggedItem, overItem.nextSibling);
+        }
+      }
+    }
+
+    function onTouchEnd(e) {
+      if (!touchDraggedItem) return;
+      e.stopPropagation();
+      touchDraggedItem.classList.remove('dragging');
+      touchDraggedItem = null;
+      saveNewOrderFromDOM();
+    }
+
+    // 將畫面上的新順序同步存回資料
+    function saveNewOrderFromDOM() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.checklist) return;
+
+      const container = document.getElementById('checklist-container');
+      const itemEls = container.querySelectorAll('.checklist-item');
+      const newIds = Array.from(itemEls).map(el => el.dataset.id);
+
+      trip.checklist.sort((a, b) => newIds.indexOf(a.id) - newIds.indexOf(b.id));
+      saveTrips();
+    }
+
+    // 點選此列打勾 / 取消打勾
+    function toggleChecklistItem(itemId) {
+      if (mouseDraggedItem || touchDraggedItem) return;
+
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.checklist) return;
+
+      const item = trip.checklist.find(i => i.id === itemId);
+      if (item) {
+        item.checked = !item.checked;
+        saveTrips();
+        renderChecklist();
+      }
+    }
+
+    // 新增物品項目
+    function addChecklistItem() {
+      const input = document.getElementById('new-checklist-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      if (!trip.checklist) trip.checklist = [];
+
+      trip.checklist.push({
+        id: 'chk_' + Date.now(),
+        text: text,
+        checked: false
+      });
+
+      saveTrips();
+      input.value = '';
+      renderChecklist();
+    }
+
+    // 刪除單個物品
+    function deleteChecklistItem(e, itemId) {
+      e.stopPropagation(); // 防止觸發整列打勾
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.checklist) return;
+
+      trip.checklist = trip.checklist.filter(i => i.id !== itemId);
+      saveTrips();
+      renderChecklist();
+    }
+
+    // 一鍵全部取消打勾（重新打包時很好用）
+    function resetAllChecklist() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.checklist) return;
+
+      trip.checklist.forEach(i => i.checked = false);
+      saveTrips();
+      renderChecklist();
+    }
+
+    /* ========== 階段四：行程安排核心邏輯 ========== */
+    let currentActiveDay = 1;
+
+    function switchDetailTab(tab) {
+      // 切換下方 Tab 按鈕樣式
+      document.querySelectorAll('.bottom-tab-bar .tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`tab-btn-${tab}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      // 切換內容區塊顯示
+      const checklistSection = document.getElementById('tab-checklist-content');
+      const itinerarySection = document.getElementById('tab-itinerary-content');
+      const shoppingSection = document.getElementById('tab-shopping-content');
+
+      if (tab === 'checklist') {
+        checklistSection.style.display = 'flex';
+        itinerarySection.style.display = 'none';
+        shoppingSection.style.display = 'none';
+        renderChecklist();
+      } else if (tab === 'itinerary') {
+        checklistSection.style.display = 'none';
+        itinerarySection.style.display = 'flex';
+        shoppingSection.style.display = 'none';
+        renderItinerary();
+      } else if (tab === 'shopping') {
+        checklistSection.style.display = 'none';
+        itinerarySection.style.display = 'none';
+        shoppingSection.style.display = 'flex';
+        renderShopping();
+      }
+    }
+
+    // 計算該旅程應顯示的天數
+    function getTripTotalDays(trip) {
+      let days = 3; // 預設至少 3 天
+      if (trip.startDate && trip.endDate) {
+        const s = new Date(trip.startDate);
+        const e = new Date(trip.endDate);
+        const diff = Math.ceil((e - s) / (1000 * 60 * 60 * 24)) + 1;
+        if (!isNaN(diff) && diff > 0) {
+          days = diff;
+        }
+      }
+      if (trip.customDayCount && trip.customDayCount > days) {
+        days = trip.customDayCount;
+      }
+      if (trip.itinerary && trip.itinerary.length > 0) {
+        const maxItinDay = Math.max(...trip.itinerary.map(i => i.day || 1));
+        if (maxItinDay > days) days = maxItinDay;
+      }
+      return days;
+    }
+
+    // 計算特定天數對應的西曆月/日
+    function getDayDateLabel(trip, dayIndex) {
+      if (!trip.startDate) return '';
+      try {
+        const s = new Date(trip.startDate);
+        s.setDate(s.getDate() + (dayIndex - 1));
+        const m = s.getMonth() + 1;
+        const d = s.getDate();
+        return `(${m}/${d})`;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    // 渲染行程安排主畫面（天數列 + 當日行程時間軸）
+    function renderItinerary() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      if (!trip.itinerary || !Array.isArray(trip.itinerary)) {
+        trip.itinerary = [];
+        saveTrips();
+      }
+
+      const totalDays = getTripTotalDays(trip);
+      if (currentActiveDay > totalDays) {
+        currentActiveDay = 1;
+      }
+
+      // 1. 渲染天數滑動分頁按鈕
+      const dayTabsContainer = document.getElementById('itinerary-day-tabs');
+      let dayTabsHtml = '';
+      for (let d = 1; d <= totalDays; d++) {
+        const dateStr = getDayDateLabel(trip, d);
+        const isActive = (d === currentActiveDay);
+        dayTabsHtml += `
+          <button type="button" class="day-tab-pill ${isActive ? 'active' : ''}" onclick="selectItinDay(${d})">
+            第 ${d} 天 ${dateStr}
+          </button>
+        `;
+      }
+      dayTabsHtml += `
+        <button type="button" class="btn-add-day" onclick="addItinDay()" title="增加一天規劃">
+          ＋ 增加天數
+        </button>
+      `;
+      dayTabsContainer.innerHTML = dayTabsHtml;
+
+      // 2. 更新當日抬頭
+      const curDateStr = getDayDateLabel(trip, currentActiveDay);
+      document.getElementById('current-day-heading').textContent = `📅 第 ${currentActiveDay} 天行程活動 ${curDateStr}`;
+
+      // 3. 篩選出當天的行程項目，並依時間排序
+      const dayItems = trip.itinerary.filter(item => (item.day || 1) === currentActiveDay);
+      dayItems.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+      // 4. 渲染時間軸清單
+      const timelineContainer = document.getElementById('timeline-items-container');
+      if (dayItems.length === 0) {
+        timelineContainer.innerHTML = `
+          <div class="itinerary-empty" style="margin-left: -20px;">
+            <div style="font-size: 36px;">🗺️</div>
+            <div style="font-weight: 700; color: var(--text-dark);">這一天還沒有安排行程</div>
+            <div>點擊右上角的「＋ 新增景點活動」，寫下精彩的一天吧！</div>
+          </div>
+        `;
+        return;
+      }
+
+      // 渲染時間軸：含拖曳手把 ☰
+      timelineContainer.innerHTML = dayItems.map(item => {
+        return `
+          <div class="timeline-card" data-id="${item.id}" draggable="true">
+            <div class="timeline-top">
+              <span class="timeline-time-badge">🕒 ${escapeHtml(item.time || '時間未定')}</span>
+              ${item.location ? `<span class="timeline-location">📍 ${escapeHtml(item.location)}</span>` : ''}
+            </div>
+            <div class="timeline-title">${escapeHtml(item.title)}</div>
+            ${item.note ? `<div class="timeline-note">${escapeHtml(item.note)}</div>` : ''}
+
+            <div class="timeline-card-actions">
+              <div class="timeline-drag-handle" title="按住拖曳調整順序">☰</div>
+              <button type="button" class="btn-card-action btn-edit" onclick="openEditItinModal('${item.id}')">
+                ✎ 編輯
+              </button>
+              <button type="button" class="btn-card-action btn-delete" onclick="deleteItinItem('${item.id}')">
+                🗑 刪除
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 初始化行程拖曳排序
+      initItinDrag();
+
+      // 自動捲動天數列讓選取的天數進入視野
+      setTimeout(() => {
+        const activeBtn = document.querySelector('#itinerary-day-tabs .day-tab-pill.active');
+        if (activeBtn) activeBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 50);
+    }
+
+    // 天數列左右滑動（點擊箭頭）
+    function scrollDayNav(dir) {
+      const wrapper = document.getElementById('itinerary-day-tabs');
+      if (!wrapper) return;
+      wrapper.scrollBy({ left: dir * 120, behavior: 'smooth' });
+    }
+
+    // 切換天數
+    function selectItinDay(day) {
+      currentActiveDay = day;
+      renderItinerary();
+    }
+
+    // 增加一天
+    function addItinDay() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+      const totalDays = getTripTotalDays(trip);
+      trip.customDayCount = totalDays + 1;
+      currentActiveDay = totalDays + 1;
+      saveTrips();
+      renderItinerary();
+    }
+
+    // 開啟「新增行程」彈窗
+    function openAddItinModal() {
+      document.getElementById('itin-modal-title').textContent = `新增第 ${currentActiveDay} 天行程活動`;
+      document.getElementById('btn-itin-submit').textContent = '加入行程';
+      document.getElementById('form-itin-id').value = '';
+      document.getElementById('itin-time-input').value = '';
+      document.getElementById('itin-location-input').value = '';
+      document.getElementById('itin-title-input').value = '';
+      document.getElementById('itin-note-input').value = '';
+      document.getElementById('itin-modal').classList.add('open');
+      setTimeout(() => document.getElementById('itin-title-input').focus(), 150);
+    }
+
+    // 開啟「編輯行程」彈窗
+    function openEditItinModal(itinId) {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.itinerary) return;
+
+      const item = trip.itinerary.find(i => i.id === itinId);
+      if (!item) return;
+
+      document.getElementById('itin-modal-title').textContent = `編輯第 ${item.day || currentActiveDay} 天行程`;
+      document.getElementById('btn-itin-submit').textContent = '儲存修改';
+      document.getElementById('form-itin-id').value = item.id;
+      document.getElementById('itin-time-input').value = item.time || '';
+      document.getElementById('itin-location-input').value = item.location || '';
+      document.getElementById('itin-title-input').value = item.title || '';
+      document.getElementById('itin-note-input').value = item.note || '';
+      document.getElementById('itin-modal').classList.add('open');
+    }
+
+    // 關閉行程表單
+    function closeItinModal() {
+      document.getElementById('itin-modal').classList.remove('open');
+    }
+
+    function onItinModalOverlayClick(e) {
+      if (e.target === document.getElementById('itin-modal')) {
+        closeItinModal();
+      }
+    }
+
+    // 儲存行程活動（新增 / 編輯）
+    function handleItinFormSubmit(e) {
+      e.preventDefault();
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      if (!trip.itinerary) trip.itinerary = [];
+
+      const itinId = document.getElementById('form-itin-id').value;
+      const time = document.getElementById('itin-time-input').value.trim();
+      const location = document.getElementById('itin-location-input').value.trim();
+      const title = document.getElementById('itin-title-input').value.trim();
+      const note = document.getElementById('itin-note-input').value.trim();
+
+      if (!title) return;
+
+      if (itinId) {
+        // 編輯既有項目
+        const index = trip.itinerary.findIndex(i => i.id === itinId);
+        if (index !== -1) {
+          trip.itinerary[index].time = time;
+          trip.itinerary[index].location = location;
+          trip.itinerary[index].title = title;
+          trip.itinerary[index].note = note;
+        }
+      } else {
+        // 新增項目至當前選定天數
+        trip.itinerary.push({
+          id: 'itin_' + Date.now(),
+          day: currentActiveDay,
+          time: time,
+          location: location,
+          title: title,
+          note: note
+        });
+      }
+
+      saveTrips();
+      closeItinModal();
+      renderItinerary();
+    }
+
+    // 刪除行程活動
+    function deleteItinItem(itinId) {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.itinerary) return;
+
+      const item = trip.itinerary.find(i => i.id === itinId);
+      if (!item) return;
+
+      if (confirm(`確定要刪除「${item.title}」這個行程嗎？`)) {
+        trip.itinerary = trip.itinerary.filter(i => i.id !== itinId);
+        saveTrips();
+        renderItinerary();
+      }
+    }
+
+    /* ========== 行程時間軸拖曳排序邏輯 ========== */
+    let itinMouseDragged = null;
+    let itinTouchDragged = null;
+
+    function initItinDrag() {
+      const container = document.getElementById('timeline-items-container');
+      if (!container) return;
+
+      const cards = container.querySelectorAll('.timeline-card');
+
+      cards.forEach(card => {
+        // ── 電腦滑鼠拖曳 ──
+        card.addEventListener('dragstart', (e) => {
+          if (e.target.closest('.btn-card-action') ||
+              e.target.closest('.timeline-drag-handle') === null &&
+              !e.target.closest('.timeline-card')) {
+            // 只要不是從拖曳手把起始就也允許（整張卡片 draggable=true）
+          }
+          itinMouseDragged = card;
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', card.dataset.id);
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          itinMouseDragged = null;
+          saveItinOrderFromDOM();
+        });
+
+        card.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!itinMouseDragged || itinMouseDragged === card) return;
+          const rect = card.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          if (e.clientY < midY) {
+            container.insertBefore(itinMouseDragged, card);
+          } else {
+            container.insertBefore(itinMouseDragged, card.nextSibling);
+          }
+        });
+
+        // ── iPhone 觸控拖曳（透過 ☰ 手把觸發） ──
+        const handle = card.querySelector('.timeline-drag-handle');
+        if (handle) {
+          handle.addEventListener('touchstart', itinTouchStart, { passive: false });
+          handle.addEventListener('touchmove', itinTouchMove, { passive: false });
+          handle.addEventListener('touchend', itinTouchEnd, { passive: false });
+          handle.addEventListener('touchcancel', itinTouchEnd, { passive: false });
+        }
+      });
+    }
+
+    function itinTouchStart(e) {
+      e.stopPropagation();
+      itinTouchDragged = this.closest('.timeline-card');
+      if (itinTouchDragged) {
+        itinTouchDragged.classList.add('dragging');
+        if (navigator.vibrate) navigator.vibrate(15);
+      }
+    }
+
+    function itinTouchMove(e) {
+      if (!itinTouchDragged) return;
+      e.preventDefault();
+      e.stopPropagation();
+
+      const touch = e.touches[0];
+      const target = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!target) return;
+
+      const overCard = target.closest('.timeline-card');
+      const container = document.getElementById('timeline-items-container');
+      if (overCard && overCard !== itinTouchDragged && container.contains(overCard)) {
+        const rect = overCard.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (touch.clientY < midY) {
+          container.insertBefore(itinTouchDragged, overCard);
+        } else {
+          container.insertBefore(itinTouchDragged, overCard.nextSibling);
+        }
+      }
+    }
+
+    function itinTouchEnd(e) {
+      if (!itinTouchDragged) return;
+      e.stopPropagation();
+      itinTouchDragged.classList.remove('dragging');
+      itinTouchDragged = null;
+      saveItinOrderFromDOM();
+    }
+
+    // 將 DOM 中當天行程的新排列順序存回資料
+    function saveItinOrderFromDOM() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.itinerary) return;
+
+      const container = document.getElementById('timeline-items-container');
+      if (!container) return;
+
+      const cardEls = container.querySelectorAll('.timeline-card');
+      const newIds = Array.from(cardEls).map(el => el.dataset.id);
+
+      // 只重排「當天」的項目，其他天不動
+      const otherDays = trip.itinerary.filter(i => (i.day || 1) !== currentActiveDay);
+      const thisDay = newIds
+        .map(id => trip.itinerary.find(i => i.id === id))
+        .filter(Boolean);
+
+      trip.itinerary = [...otherDays, ...thisDay];
+      saveTrips();
+    }
+
+    /* ========== 階段五：旅遊採買核心邏輯（含拖曳排序與花費統計） ========== */
+    let shopMouseDragged = null;
+    let shopTouchDragged = null;
+
+    // 渲染採買清單與統計數據
+    function renderShopping() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      if (!trip.shopping) trip.shopping = [];
+
+      const list = trip.shopping;
+      const totalCount = list.length;
+      const boughtCount = list.filter(item => item.bought).length;
+
+      // 計算總花費與已購買花費
+      const totalAmount = list.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+      const boughtAmount = list
+        .filter(item => item.bought)
+        .reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+
+      // 更新頂部花費記帳統計卡片
+      document.getElementById('shopping-total-amount').textContent = `$${totalAmount.toLocaleString()}`;
+      document.getElementById('shopping-bought-amount').textContent = `$${boughtAmount.toLocaleString()}`;
+      document.getElementById('shopping-progress-pill').textContent = `${boughtCount} / ${totalCount} 件`;
+
+      const container = document.getElementById('shopping-items-container');
+      if (totalCount === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 32px 16px; background: var(--card-bg); border-radius: var(--radius-md); border: 1px dashed var(--border-warm); color: var(--text-muted); font-size: 13px;">
+            <div style="font-size: 32px; margin-bottom: 8px;">🛍️</div>
+            <div>目前採買清單空空的</div>
+            <div style="font-size: 12px; margin-top: 4px;">在上方填寫伴手禮名稱與金額，即可加入採買記帳清單！</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(item => {
+        const isBought = !!item.bought;
+        const priceDisplay = (item.price !== undefined && item.price !== null && item.price !== '') 
+          ? `<span class="shop-price-tag">$${Number(item.price).toLocaleString()}</span>` 
+          : '';
+        const noteDisplay = item.note ? `<div class="shop-item-note">📝 ${escapeHtml(item.note)}</div>` : '';
+
+        return `
+          <div class="shopping-item-card ${isBought ? 'bought' : ''}" 
+               data-id="${item.id}"
+               draggable="true"
+               onclick="toggleShoppingBought('${item.id}')">
+            <!-- 點擊空心方塊打勾 -->
+            <div class="shop-checkbox-square" title="${isBought ? '標記為未買' : '標記為已買'}"></div>
+
+            <!-- 採買項目內容 -->
+            <div class="shop-item-content">
+              <div class="shop-item-top">
+                <span class="shop-item-name">${escapeHtml(item.name)}</span>
+                ${priceDisplay}
+              </div>
+              ${noteDisplay}
+            </div>
+
+            <!-- 操作區：編輯與拖曳手把 -->
+            <div class="shop-actions-right" onclick="event.stopPropagation()">
+              <button type="button" class="btn-edit-shop" onclick="openShopModal('${item.id}')" title="編輯備註或金額">
+                ✎
+              </button>
+              <button type="button" class="btn-del-item" onclick="deleteShoppingItem(event, '${item.id}')" title="刪除項目">
+                ✕
+              </button>
+              <div class="shop-drag-handle" title="拖曳調整順序">
+                ☰
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 初始化採買清單拖曳排序（電腦滑鼠 + iPhone 觸控）
+      initShopDrag();
+    }
+
+    // 點擊項目切換 已買 / 未買 狀態
+    function toggleShoppingBought(itemId) {
+      if (shopMouseDragged || shopTouchDragged) return;
+
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping) return;
+
+      const item = trip.shopping.find(i => i.id === itemId);
+      if (item) {
+        item.bought = !item.bought;
+        saveTrips();
+        renderShopping();
+      }
+    }
+
+    // 快速新增採買項目
+    function addQuickShoppingItem() {
+      const titleInput = document.getElementById('new-shop-title');
+      const priceInput = document.getElementById('new-shop-price');
+      const name = titleInput.value.trim();
+      if (!name) {
+        titleInput.focus();
+        return;
+      }
+
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip) return;
+
+      if (!trip.shopping) trip.shopping = [];
+
+      const rawPrice = priceInput.value.trim();
+      const price = rawPrice !== '' ? Number(rawPrice) : 0;
+
+      trip.shopping.push({
+        id: 'shop_' + Date.now(),
+        name: name,
+        price: isNaN(price) ? 0 : price,
+        bought: false,
+        note: ''
+      });
+
+      saveTrips();
+      titleInput.value = '';
+      priceInput.value = '';
+      renderShopping();
+    }
+
+    // 刪除採買項目
+    function deleteShoppingItem(e, itemId) {
+      e.stopPropagation();
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping) return;
+
+      trip.shopping = trip.shopping.filter(i => i.id !== itemId);
+      saveTrips();
+      renderShopping();
+    }
+
+    // 全部重設為未買
+    function resetAllShoppingBought() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping || trip.shopping.length === 0) return;
+
+      trip.shopping.forEach(i => i.bought = false);
+      saveTrips();
+      renderShopping();
+    }
+
+    // 開啟編輯採買視窗
+    function openShopModal(itemId) {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping) return;
+
+      const item = trip.shopping.find(i => i.id === itemId);
+      if (!item) return;
+
+      document.getElementById('form-shop-id').value = item.id;
+      document.getElementById('shop-edit-name-input').value = item.name || '';
+      document.getElementById('shop-edit-price-input').value = (item.price !== undefined && item.price !== null) ? item.price : '';
+      document.getElementById('shop-edit-note-input').value = item.note || '';
+
+      document.getElementById('shop-edit-modal').classList.add('open');
+    }
+
+    // 關閉編輯採買視窗
+    function closeShopModal() {
+      document.getElementById('shop-edit-modal').classList.remove('open');
+    }
+
+    function onShopModalOverlayClick(e) {
+      if (e.target.id === 'shop-edit-modal') {
+        closeShopModal();
+      }
+    }
+
+    // 儲存採買編輯表單
+    function handleShopEditFormSubmit(e) {
+      e.preventDefault();
+      const id = document.getElementById('form-shop-id').value;
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping) return;
+
+      const item = trip.shopping.find(i => i.id === id);
+      if (!item) return;
+
+      const newName = document.getElementById('shop-edit-name-input').value.trim();
+      const rawPrice = document.getElementById('shop-edit-price-input').value.trim();
+      const newNote = document.getElementById('shop-edit-note-input').value.trim();
+
+      if (!newName) return;
+
+      item.name = newName;
+      item.price = rawPrice !== '' ? Number(rawPrice) : 0;
+      item.note = newNote;
+
+      saveTrips();
+      closeShopModal();
+      renderShopping();
+    }
+
+    // 採買清單拖曳排序（電腦滑鼠 + 手機觸控）
+    function initShopDrag() {
+      const container = document.getElementById('shopping-items-container');
+      if (!container) return;
+
+      const cards = container.querySelectorAll('.shopping-item-card');
+
+      cards.forEach(card => {
+        // --- 1. 電腦滑鼠拖曳 ---
+        card.addEventListener('dragstart', (e) => {
+          if (
+            e.target.closest('.shop-drag-handle') === null &&
+            e.target.closest('.btn-edit-shop') === null &&
+            e.target.closest('.btn-del-item') === null
+          ) {
+            // 也允許直接拖曳卡片
+          }
+          shopMouseDragged = card;
+          card.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', card.dataset.id);
+        });
+
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          shopMouseDragged = null;
+          saveShopOrderFromDOM();
+        });
+
+        card.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          if (!shopMouseDragged || shopMouseDragged === card) return;
+
+          const rect = card.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          if (e.clientY < midY) {
+            container.insertBefore(shopMouseDragged, card);
+          } else {
+            container.insertBefore(shopMouseDragged, card.nextSibling);
+          }
+        });
+
+        // --- 2. 手機觸控拖曳 (iPhone) ---
+        const handle = card.querySelector('.shop-drag-handle');
+        if (handle) {
+          handle.addEventListener('touchstart', shopTouchStart, { passive: false });
+          handle.addEventListener('touchmove', shopTouchMove, { passive: false });
+          handle.addEventListener('touchend', shopTouchEnd, { passive: false });
+          handle.addEventListener('touchcancel', shopTouchEnd, { passive: false });
+        }
+      });
+    }
+
+    function shopTouchStart(e) {
+      const handle = e.target.closest('.shop-drag-handle');
+      if (!handle) return;
+
+      const card = handle.closest('.shopping-item-card');
+      if (!card) return;
+
+      shopTouchDragged = card;
+      card.classList.add('dragging');
+      if (e.cancelable) e.preventDefault();
+    }
+
+    function shopTouchMove(e) {
+      if (!shopTouchDragged) return;
+      if (e.cancelable) e.preventDefault();
+
+      const touch = e.touches[0];
+      const targetElement = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (!targetElement) return;
+
+      const overCard = targetElement.closest('.shopping-item-card');
+      const container = document.getElementById('shopping-items-container');
+
+      if (overCard && overCard !== shopTouchDragged && container.contains(overCard)) {
+        const rect = overCard.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        if (touch.clientY < midY) {
+          container.insertBefore(shopTouchDragged, overCard);
+        } else {
+          container.insertBefore(shopTouchDragged, overCard.nextSibling);
+        }
+      }
+    }
+
+    function shopTouchEnd(e) {
+      if (!shopTouchDragged) return;
+      e.stopPropagation();
+      shopTouchDragged.classList.remove('dragging');
+      shopTouchDragged = null;
+      saveShopOrderFromDOM();
+    }
+
+    // 將 DOM 中的採買項目順序存回 LocalStorage
+    function saveShopOrderFromDOM() {
+      const trip = trips.find(t => t.id === currentActiveTripId);
+      if (!trip || !trip.shopping) return;
+
+      const container = document.getElementById('shopping-items-container');
+      if (!container) return;
+
+      const cardEls = container.querySelectorAll('.shopping-item-card');
+      const newIds = Array.from(cardEls).map(el => el.dataset.id);
+
+      trip.shopping.sort((a, b) => newIds.indexOf(a.id) - newIds.indexOf(b.id));
+      saveTrips();
+    }
+
+    // 手機教學彈窗控制
+    function openGuideModal() {
+      document.getElementById('guide-modal').classList.add('open');
+    }
+
+    function closeGuideModal() {
+      document.getElementById('guide-modal').classList.remove('open');
+    }
+
+    function onGuideModalOverlayClick(e) {
+      if (e.target.id === 'guide-modal') {
+        closeGuideModal();
+      }
+    }
+
+    // 防 XSS 簡易字元轉義
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    // 啟動執行
+    initApp();
+  </script>
+</body>
+</html>
+
